@@ -1,0 +1,9 @@
+table tbody tr {
+    cursor: pointer;
+}
+
+table thead tr {
+    background: #cfecfa;
+}
+
+
