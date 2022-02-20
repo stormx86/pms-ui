@@ -9,10 +9,11 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import ProjectService from "../services/project.service";
-import InputGroup from "react-bootstrap/InputGroup";
 import Alert from "react-bootstrap/Alert";
 import validate from "../validators/new-project-validator";
 import Modal from "react-bootstrap/Modal";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faTrash} from '@fortawesome/free-solid-svg-icons'
 
 export default function ProjectEdit() {
     const [searchParams] = useSearchParams();
@@ -96,18 +97,20 @@ export default function ProjectEdit() {
                         <ListGroup variant="flush">
                             <ListGroup.Item>
                                 <Row style={{alignItems: 'center'}}>
-                                    <Col xs={6}>
+                                    <Col xs={5}>
                                         Creator:
                                     </Col>
                                     <Col xs={6}>
                                         <Form.Control type="text" value={projectCreator} readOnly={1}/>
+                                    </Col>
+                                    <Col xs={1}>
                                     </Col>
                                 </Row>
                             </ListGroup.Item>
 
                             <ListGroup.Item>
                                 <Row style={{alignItems: 'center'}}>
-                                    <Col xs={6}>
+                                    <Col xs={5}>
                                         Project Manager:
                                     </Col>
                                     <Col xs={6}>
@@ -117,6 +120,8 @@ export default function ProjectEdit() {
                                                           setProjectManager(e.target.value)}}/>
                                         {errors.projectManager && (<Alert variant="danger">{errors.projectManager}</Alert>)}
                                     </Col>
+                                    <Col xs={1}>
+                                    </Col>
                                 </Row>
                             </ListGroup.Item>
 
@@ -125,8 +130,8 @@ export default function ProjectEdit() {
                                 return (
 
                                     <ListGroup.Item key={index}>
-                                        <Row>
-                                            <Col xs={6}>
+                                        <Row style={{alignItems: 'center'}}>
+                                            <Col xs={5}>
                                                 <Form.Select value={roles.projectRoleName}
                                                              onChange={updateSelectedRoles(index)}>
                                                     {rolesData &&
@@ -139,11 +144,14 @@ export default function ProjectEdit() {
                                                 </Form.Select>
                                             </Col>
                                             <Col xs={6}>
-                                                <InputGroup className="mb-3">
                                                     <Form.Control type="text" value={roles.userName} onChange={updateUsernamesForRoles(index)}/>
-                                                    <Button size="sm" variant="danger" onClick={() => handleRemoveRole(index)}>-</Button>
                                                     {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(index) && (<Alert variant="danger">Field is required</Alert>)}
-                                                </InputGroup>
+                                            </Col>
+                                            <Col xs={1}>
+                                                <FontAwesomeIcon style={{cursor: 'pointer', fontSize: '18px'}}
+                                                                 icon={faTrash} onClick={() => {
+                                                    handleRemoveRole(index)
+                                                }}/>
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>
@@ -266,7 +274,7 @@ function updateProject(projectId, updatedProject, setErrors, setShowSuccessModal
         setErrors(errorList);
         return null;
     }
-console.log(updatedProject)
+
     ProjectService.updateProject(projectId, updatedProject).then(
         response => {
             if(response.data !==null){

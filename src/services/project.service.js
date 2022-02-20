@@ -42,7 +42,6 @@ class ProjectService {
     deleteProject(projectId) {
         return axios.delete(API_URL + "/project", {headers: authHeader(), params: {projectId: projectId}});
     }
-
 }
 
 export default new ProjectService();

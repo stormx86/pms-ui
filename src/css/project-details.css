@@ -8,3 +8,7 @@
     line-height:30px;
     padding:0px 15px;
 }
+
+.comment-form-show{
+    cursor: pointer;
+}
