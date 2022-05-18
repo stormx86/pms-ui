@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+.nav-button{
+  margin: 3px;
+}
+
+nav{
+  background-color: #ffffff;
+}
+
+.nav-link{
+  color: #62198a !important;
+  font-size: 17px;
+  font-family: "JetBrains Mono SemiBold", monospace;
+}
+
+.nav-brand{
+  color: #62198a !important;
+  font-family: "JetBrains Mono SemiBold", monospace;
+  font-size: 25px;
+}
+
+.navbar-text{
+  color: #62198a !important;
+  font-family: "JetBrains Mono SemiBold", monospace;
+}

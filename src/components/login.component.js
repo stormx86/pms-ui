@@ -87,8 +87,9 @@ export default class Login extends Component {
                 <Form onSubmit={this.handleLogin} ref={c => {
                     this.form = c;
                 }}>
-                    <h4>Project Management System</h4>
-                    <p align="center">Sign In Please</p>
+                    <h4 className="login-header">Project Management System</h4>
+                    <br/>
+                    <div className="login-header-title">Sign In Please</div>
                     <div className="form-group">
                         <Input type="text" className="form-control" name="username" placeholder="Username"
                                value={this.state.username}
@@ -103,7 +104,7 @@ export default class Login extends Component {
                         <br/>
                     </div>
                   <div className="d-grid gap-2">
-                    <Button variant="outline-primary" size="lg" type="submit" disabled={this.state.loading}>Sign in</Button>
+                    <Button variant="outline-secondary" size="lg" type="submit" disabled={this.state.loading}>Sign in</Button>
                   </div>
                     {this.state.message && (
                         <div className="form-group">

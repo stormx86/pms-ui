@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Routes, Route, Link} from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Navbar from 'react-bootstrap/Navbar';
@@ -9,11 +9,13 @@ import AuthService from "./services/auth-service";
 import Login from "./components/login.component";
 import ProjectList from "./components/project-list.component";
 import ProjectDetails from "./components/project-details.component";
-import BoardAdmin from "./components/board-admin.component";
+import BoardAdminUserManagement from "./components/board-admin-user-management.component";
+import BoardAdminRoleManagement from "./components/board-admin-role-management.component";
 import ProjectCreate from "./components/project-create.component";
 import ProjectEdit from "./components/project-edit.component";
+import Profile from "./components/profile.component";
+import EventBus from "./common/event-bus";
 
-import EventBus from "./common/EventBus";
 
 class App extends Component {
     constructor(props) {
@@ -58,52 +60,53 @@ class App extends Component {
 
         return (
             <div>
-                <Navbar bg="light" variant="primary">
+                <Container>
+                <Navbar >
                     <Container>
-                        <Navbar.Brand href="/projects">Project Management System</Navbar.Brand>
+                        <Navbar.Brand className="nav-brand" href="/projects">ProjectManagementSystem</Navbar.Brand>
                         <Nav className="me-auto">
                             {currentUser && (
-                                <Nav.Link href="/projects">Project List</Nav.Link>
+                                <Nav.Link className="nav-link" href="/projects">ProjectList</Nav.Link>
                             )}
 
                             {currentUser && (
-                                <Nav.Link href="/projects/create">Create project</Nav.Link>
+                                <Nav.Link className="nav-link" href="/projects/create">CreateProject</Nav.Link>
                             )}
 
                             {showAdminBoard && (
-                                <Nav.Link href="/admin">Admin Panel</Nav.Link>
+                                <Nav.Link className="nav-link" href="/admin/user">AdminPanel</Nav.Link>
                             )}
                         </Nav>
 
                         <Navbar.Collapse className="justify-content-end">
-                            {currentUser ? (
+                            {currentUser && (
                                 <div className="navbar-nav ml-auto">
-                                    <Navbar.Text>
-                                        Signed in as: <a href="/profile">{currentUser.username}</a>
+                                    <Navbar.Text className="navbar-text">
+                                        Signed in as: <a href={'../profile/' + currentUser.id}>{currentUser.username}</a>
                                     </Navbar.Text>
-                                    <Nav.Link href="/login" onClick={this.logOut}>Sign Out</Nav.Link>
+                                    <Nav.Link href="/login" onClick={this.logOut}>SignOut</Nav.Link>
                                 </div>
-                            ) : (
-                                <Nav><Nav.Link href="/login">Sign In</Nav.Link></Nav>
-
                             )}
                         </Navbar.Collapse>
                     </Container>
                 </Navbar>
-
+                </Container>
                 <div className="container mt-3">
                     <Routes>
                         <Route exact path="/" element={<Login/>}/>
                         <Route exact path="/login" element={<Login/>}/>
                         <Route path="/projects" element={<ProjectList/>}/>
                         <Route path="/projects/project" element={<ProjectDetails/>}/>
-                        <Route path="/admin" element={<BoardAdmin/>}/>
+                        <Route path="/admin/user" element={<BoardAdminUserManagement/>}/>
+                        <Route path="/admin/role" element={<BoardAdminRoleManagement/>}/>
                         <Route path="/projects/create" element={<ProjectCreate/>}/>
                         <Route path="/projects/project/edit" element={<ProjectEdit/>}/>
+                        <Route path="/profile/:userId" element={<Profile/>}/>
                     </Routes>
                 </div>
             </div>
         );
     }
 }
+
 export default App;

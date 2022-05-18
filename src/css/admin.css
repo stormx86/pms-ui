@@ -1,0 +1,23 @@
+.nav.nav-tabs .nav-link.active {
+    background-color: #eaedce;
+}
+
+.roles-header{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    font-size: 17px;
+}
+
+.edit-user-header{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    font-size: 20px;
+}
+
+.form-check{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    font-size: 15px;
+}
+
+.add-new-user-header{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    font-size: 17px;
+}
