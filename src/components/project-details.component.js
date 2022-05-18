@@ -14,6 +14,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import AuthService from "../services/auth.service";
+import Moment from "moment";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlus, faMinus, faTrash} from '@fortawesome/free-solid-svg-icons'
 
@@ -160,7 +161,8 @@ export default function ProjectDetails() {
                                                     <b>{comment.username}</b>
                                                 </Col>
                                                 <Col xs={3} className="d-flex justify-content-end">
-                                                    {comment.createdAt}
+                                                    {comment.createdAt}{' '}
+
                                                 </Col>
                                                 <Col xs={1}>
                                                     {showAdminBoard &&
@@ -186,6 +188,7 @@ export default function ProjectDetails() {
                             {projectData.comments < 1 && (
                                 <div><i>There are no comments yet...</i></div>
                             )}
+
                         </ListGroup>
                     </Card>
 
@@ -197,7 +200,8 @@ export default function ProjectDetails() {
                                               setNewComment({
                                                   projectId: projectId,
                                                   commentText: e.target.value,
-                                                  username: currentUser.username
+                                                  username: currentUser.username,
+                                                  createdAt: Moment().format("DD-MM-YYYY HH:mm:ss")
                                               })
                                           }}/>
                             <br/>
