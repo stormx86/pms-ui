@@ -3,7 +3,14 @@ table tbody tr {
 }
 
 table thead tr {
-    background: #cfecfa;
+    background: #eaedce;
+    text-align: center;
+    font-family: "JetBrains Mono SemiBold", monospace;
+    font-size: 17px;
 }
 
+table tbody tr td {
+    font-family: "Arial", monospace;
+    font-size: 17px;
+}
 

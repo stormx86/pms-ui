@@ -14,3 +14,17 @@
 .login-form h2 {
     margin: 0 0 15px;
 }
+
+.login-header{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    color: #62198a !important;
+    font-size: 20px;
+    text-align: center;
+}
+
+.login-header-title{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    color: #62198a !important;
+    font-size: 14px;
+    text-align: center;
+}

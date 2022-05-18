@@ -18,10 +18,12 @@ export default function ProjectList() {
             {
                 Header: 'Project #',
                 accessor: 'projectId',
+                width: '10%',
             },
             {
                 Header: 'Created At',
                 accessor: 'createdAt',
+                width: '15%',
             },
             {
                 Header: 'Project Name',
@@ -30,14 +32,17 @@ export default function ProjectList() {
             {
                 Header: 'Status',
                 accessor: 'status',
+                width: '15%',
             },
             {
                 Header: 'Project Manager',
                 accessor: 'projectManager',
+                width: '15%',
             },
             {
-                Header: 'Created By',
+                Header: 'Creator',
                 accessor: 'creator',
+                width: '10%',
             },
         ],
         []
@@ -72,9 +77,9 @@ export default function ProjectList() {
             <BTable bordered hover {...getTableProps()}>
                 <thead>
                 {headerGroups.map(headerGroup => (
-                    <tr color={'red'} key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                    <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <th key={column.id} {...column.getHeaderProps()}>{column.render('Header')}</th>
+                            <th style={{width: column.width}} key={column.id} {...column.getHeaderProps()}>{column.render('Header')}</th>
                         ))}
                     </tr>
                 ))}

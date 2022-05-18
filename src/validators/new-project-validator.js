@@ -30,7 +30,6 @@ const validate = (values) => {
             }
         })
     }
-console.log(commonErrors);
     return commonErrors;
 };
 export default validate;

@@ -139,7 +139,7 @@ export default function ProjectCreate() {
                     <Button variant="success" onClick={() => {createProject(newProject, setErrors, setShowSuccessModal)}}>Create</Button>{' '}
                 </Col>
                 <Col xs={5}>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Title
@@ -159,7 +159,7 @@ export default function ProjectCreate() {
                         </Card.Body>
                     </Card>
                     <br/>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Description

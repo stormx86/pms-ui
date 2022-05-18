@@ -156,7 +156,7 @@ export default function ProjectEdit() {
                     <Button variant="success" onClick={() => {updateProject(projectId, updatedProject, setErrors, setShowSuccessModal)}}>Update</Button>{' '}
                 </Col>
                 <Col xs={5}>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Title
@@ -173,7 +173,7 @@ export default function ProjectEdit() {
                         </Card.Body>
                     </Card>
                     <br/>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Description

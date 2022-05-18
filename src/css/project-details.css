@@ -1,5 +1,5 @@
 .card-header {
-    background-color: #cfecfa;
+    background-color: #eaedce;
 }
 
 .alert {
@@ -7,4 +7,13 @@
     height: 30px;
     line-height:30px;
     padding:0px 15px;
+}
+
+.comment-form-show{
+    cursor: pointer;
+}
+
+.card-title{
+    font-family: "JetBrains Mono SemiBold", monospace;
+    font-size: 18px;
 }
