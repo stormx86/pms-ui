@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
-import EventBus from "../common/EventBus";
+import EventBus from "../common/event-bus";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -8,9 +8,9 @@ import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import ProjectService from "../services/project.service";
+import ProjectService from "../services/project-service";
 import Alert from "react-bootstrap/Alert";
-import validate from "../validators/new-project-validator";
+import validate from "../validators/project-details-validator";
 import Modal from "react-bootstrap/Modal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrash} from '@fortawesome/free-solid-svg-icons'
@@ -28,8 +28,13 @@ export default function ProjectEdit() {
     const [projectStatus, setProjectStatus] = useState('');
     const [newRolesList, setNewRolesList] = useState([]);
 
-    const [errors, setErrors] = useState({title: '', description: '', projectManager:'', roleErrors:[]});
-    const roleUserInputValidationErrors = errors.roleErrors;
+    const [errorMessage, setErrorMessage] = useState({
+        projectManagerConstraint: '',
+        descriptionMin:'',
+        titleMin:'',
+        roleErrors:[]
+    });
+    const roleUserInputValidationErrors = errorMessage.roleErrors;
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
@@ -46,7 +51,7 @@ export default function ProjectEdit() {
         const list = [...newRolesList];
         list.splice(index, 1);
         setNewRolesList(list);
-        setErrors('');
+        setErrorMessage('');
     };
 
     const updateSelectedRoles = index => e => {
@@ -59,7 +64,7 @@ export default function ProjectEdit() {
         let newArr = [...newRolesList];
         newArr[index].userName = e.target.value;
         setNewRolesList(newArr);
-        setErrors('');
+        setErrorMessage('');
     };
 
     const updatedProject = {
@@ -116,9 +121,10 @@ export default function ProjectEdit() {
                                     <Col xs={6}>
                                         <Form.Control type="text" value={projectManager}
                                                       onChange={e =>{
-                                                          setErrors('');
+                                                          setErrorMessage('');
                                                           setProjectManager(e.target.value)}}/>
-                                        {errors.projectManager && (<Alert variant="danger">{errors.projectManager}</Alert>)}
+                                        <div>{errorMessage.projectManagerConstraint && (<Alert
+                                            variant="danger">{errorMessage.projectManagerConstraint}</Alert>)}</div>
                                     </Col>
                                     <Col xs={1}>
                                     </Col>
@@ -145,7 +151,7 @@ export default function ProjectEdit() {
                                             </Col>
                                             <Col xs={6}>
                                                     <Form.Control type="text" value={roles.userName} onChange={updateUsernamesForRoles(index)}/>
-                                                    {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(index) && (<Alert variant="danger">Field is required</Alert>)}
+                                                {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (<Alert variant="danger">User not found</Alert>)}
                                             </Col>
                                             <Col xs={1}>
                                                 <FontAwesomeIcon style={{cursor: 'pointer', fontSize: '18px'}}
@@ -161,10 +167,10 @@ export default function ProjectEdit() {
                         </ListGroup>
                     </Card>
                     <br/>
-                    <Button variant="success" onClick={() => {updateProject(projectId, updatedProject, setErrors, setShowSuccessModal)}}>Update</Button>{' '}
+                    <Button variant="success" onClick={() => {updateProject(projectId, updatedProject, setErrorMessage, setShowSuccessModal)}}>Update</Button>{' '}
                 </Col>
                 <Col xs={5}>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Title
@@ -174,14 +180,15 @@ export default function ProjectEdit() {
                             <Card.Text>
                                 <Form.Control size="lg" type="text" placeholder="Put project title here..."
                                               value={projectTitle} onChange={e =>{
-                                    setErrors('');
+                                    setErrorMessage('');
                                     setProjectTitle(e.target.value)}}/>
-                                {errors.title && (<Alert variant="danger">{errors.title}</Alert>)}
+                                <div>{errorMessage.titleMin && (<Alert
+                                    variant="danger">{errorMessage.titleMin}</Alert>)}</div>
                             </Card.Text>
                         </Card.Body>
                     </Card>
                     <br/>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Description
@@ -191,9 +198,10 @@ export default function ProjectEdit() {
                             <Card.Text>
                                 <Form.Control as="textarea" rows={4} placeholder="Put project description here..."
                                               value={projectDescription} onChange={e =>{
-                                    setErrors('');
+                                    setErrorMessage('');
                                     setProjectDescription(e.target.value)}}/>
-                                {errors.description && (<Alert variant="danger">{errors.description}</Alert>)}
+                                <div>{errorMessage.descriptionMin && (<Alert
+                                    variant="danger">{errorMessage.descriptionMin}</Alert>)}</div>
                             </Card.Text>
                         </Card.Body>
                     </Card>
@@ -268,13 +276,7 @@ function getProjectData(setProjectCreator,
     }, [])
 }
 
-function updateProject(projectId, updatedProject, setErrors, setShowSuccessModal) {
-    const errorList = validate(updatedProject);
-    if(Object.keys(errorList).length>0){
-        setErrors(errorList);
-        return null;
-    }
-
+function updateProject(projectId, updatedProject, setErrorMessage, setShowSuccessModal) {
     ProjectService.updateProject(projectId, updatedProject).then(
         response => {
             if(response.data !==null){
@@ -283,8 +285,9 @@ function updateProject(projectId, updatedProject, setErrors, setShowSuccessModal
         }
     )
         .catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data);
+            if (error.response) {
+                const errorList =  validate(error.response);
+                setErrorMessage(errorList);
                 } else if (error.request) {
                     console.log(error.request);
                 } else {

@@ -5,9 +5,7 @@ import "./App.css";
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
-
-import AuthService from "./services/auth.service";
-
+import AuthService from "./services/auth-service";
 import Login from "./components/login.component";
 import ProjectList from "./components/project-list.component";
 import ProjectDetails from "./components/project-details.component";

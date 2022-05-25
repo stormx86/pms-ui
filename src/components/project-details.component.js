@@ -2,10 +2,10 @@ import React, {useState, useEffect} from "react";
 import {useSearchParams} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../css/project-details.css";
-import ProjectService from "../services/project.service";
-import StatusService from "../services/status.service";
-import CommentService from "../services/comment.service";
-import EventBus from "../common/EventBus";
+import ProjectService from "../services/project-service";
+import StatusService from "../services/status-service";
+import CommentService from "../services/comment-service";
+import EventBus from "../common/event-bus";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,7 +13,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import AuthService from "../services/auth.service";
+import AuthService from "../services/auth-service";
 import Moment from "moment";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPlus, faMinus, faTrash} from '@fortawesome/free-solid-svg-icons'

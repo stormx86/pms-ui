@@ -5,7 +5,7 @@ import CheckButton from "react-validation/build/button";
 import Button from 'react-bootstrap/Button';
 import "../css/login.css";
 
-import AuthService from "../services/auth.service";
+import AuthService from "../services/auth-service";
 
 const required = value => {
     if (!value) {

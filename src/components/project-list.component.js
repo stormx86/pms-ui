@@ -2,10 +2,11 @@ import React, {useState, useEffect, useMemo} from "react";
 import {useTable, usePagination} from 'react-table'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../css/project-list.css";
+import toLowerCaseExceptFirstLetter from "../common/string-utils";
 
 import BTable from 'react-bootstrap/Table';
-import ProjectService from "../services/project.service";
-import EventBus from "../common/EventBus";
+import ProjectService from "../services/project-service";
+import EventBus from "../common/event-bus";
 
 
 export default function ProjectList() {
@@ -18,10 +19,12 @@ export default function ProjectList() {
             {
                 Header: 'Project #',
                 accessor: 'projectId',
+                width: '10%',
             },
             {
                 Header: 'Created At',
                 accessor: 'createdAt',
+                width: '15%',
             },
             {
                 Header: 'Project Name',
@@ -30,14 +33,17 @@ export default function ProjectList() {
             {
                 Header: 'Status',
                 accessor: 'status',
+                width: '15%',
             },
             {
                 Header: 'Project Manager',
                 accessor: 'projectManager',
+                width: '15%',
             },
             {
-                Header: 'Created By',
+                Header: 'Creator',
                 accessor: 'creator',
+                width: '10%',
             },
         ],
         []
@@ -68,13 +74,12 @@ export default function ProjectList() {
 
     return (
         <>
-
             <BTable bordered hover {...getTableProps()}>
                 <thead>
                 {headerGroups.map(headerGroup => (
-                    <tr color={'red'} key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                    <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <th key={column.id} {...column.getHeaderProps()}>{column.render('Header')}</th>
+                            <th style={{width: column.width}} key={column.id} {...column.getHeaderProps()}>{column.render('Header')}</th>
                         ))}
                     </tr>
                 ))}
@@ -149,7 +154,10 @@ function getData(setData) {
     useEffect(() => {
         ProjectService.getAllProjects().then(
             response => {
-                setData(response.data);
+                if(response.status === 200) {
+                    response.data.map((entry, i) => {response.data[i].status = toLowerCaseExceptFirstLetter(entry.status)});
+                    setData(response.data);
+                }
             },
             error => {
                 setData(

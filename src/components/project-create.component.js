@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 
-import EventBus from "../common/EventBus";
-import AuthService from "../services/auth.service";
+import EventBus from "../common/event-bus";
+import AuthService from "../services/auth-service";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -9,9 +9,9 @@ import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import ProjectService from "../services/project.service";
+import ProjectService from "../services/project-service";
 import Alert from "react-bootstrap/Alert";
-import validate from "../validators/new-project-validator";
+import validate from "../validators/project-details-validator";
 import Modal from "react-bootstrap/Modal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrash} from '@fortawesome/free-solid-svg-icons'
@@ -24,8 +24,13 @@ export default function ProjectCreate() {
     const [newRolesList, setNewRolesList] = useState([]);
     const [projectManagerName, setProjectManagerName] = useState('');
     const [projectBodyData, setProjectBodyData] = useState({title: '', description: ''});
-    const [errors, setErrors] = useState({title: '', description: '', projectManager:'', roleErrors:[]});
-    const roleUserInputValidationErrors = errors.roleErrors;
+    const [errorMessage, setErrorMessage] = useState({
+        projectManagerConstraint: '',
+        descriptionMin:'',
+        titleMin:'',
+        roleErrors:[]
+    });
+    const roleUserInputValidationErrors = errorMessage.roleErrors;
 
     const handleClose = () => {
         setShowSuccessModal(false);
@@ -40,7 +45,7 @@ export default function ProjectCreate() {
         const list = [...newRolesList];
         list.splice(index, 1);
         setNewRolesList(list);
-        setErrors('');
+        setErrorMessage('');
     };
 
     const updateSelectedRoles = index => e => {
@@ -53,7 +58,7 @@ export default function ProjectCreate() {
         let newArr = [...newRolesList];
         newArr[index].userName = e.target.value;
         setNewRolesList(newArr);
-        setErrors('');
+        setErrorMessage('');
     };
 
     const newProject = {
@@ -99,9 +104,10 @@ export default function ProjectCreate() {
                                     <Col xs={6}>
                                         <Form.Control type="text" value={projectManagerName}
                                                       onChange={e =>{
-                                                          setErrors('');
+                                                          setErrorMessage('');
                                                           setProjectManagerName(e.target.value)}}/>
-                                        {errors.projectManager && (<Alert variant="danger">{errors.projectManager}</Alert>)}
+                                        <div>{errorMessage.projectManagerConstraint && (<Alert
+                                            variant="danger">{errorMessage.projectManagerConstraint}</Alert>)}</div>
                                     </Col>
                                     <Col xs={1}>
                                     </Col>
@@ -128,7 +134,7 @@ export default function ProjectCreate() {
                                             </Col>
                                             <Col xs={6}>
                                                     <Form.Control type="text" value={roles.userName} onChange={updateUsernamesForRoles(index)}/>{' '}
-                                                    {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(index) && (<Alert variant="danger">Field is required</Alert>)}
+                                                    {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (<Alert variant="danger">User not found</Alert>)}
                                             </Col>
                                             <Col xs={1}>
                                                 <FontAwesomeIcon style={{cursor: 'pointer', fontSize: '18px'}}
@@ -144,10 +150,10 @@ export default function ProjectCreate() {
                         </ListGroup>
                     </Card>
                     <br/>
-                    <Button variant="success" onClick={() => {createProject(newProject, setErrors, setShowSuccessModal)}}>Create</Button>{' '}
+                    <Button variant="success" onClick={() => {createProject(newProject, setErrorMessage, setShowSuccessModal)}}>Create</Button>{' '}
                 </Col>
                 <Col xs={5}>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Title
@@ -157,17 +163,18 @@ export default function ProjectCreate() {
                             <Card.Text>
                                 <Form.Control size="lg" type="text" placeholder="Put project title here..."
                                               value={projectBodyData.title} onChange={e =>{
-                                    setErrors('');
+                                    setErrorMessage('');
                                     setProjectBodyData({
                                         title: e.target.value,
                                         description: projectBodyData.description
                                     })}}/>
-                                {errors.title && (<Alert variant="danger">{errors.title}</Alert>)}
+                                <div>{errorMessage.titleMin && (<Alert
+                                    variant="danger">{errorMessage.titleMin}</Alert>)}</div>
                             </Card.Text>
                         </Card.Body>
                     </Card>
                     <br/>
-                    <Card border="secondary" style={{width: '60rem'}}>
+                    <Card border="secondary" style={{width: '53rem'}}>
                         <Card.Header>
                             <Card.Title>
                                 Project Description
@@ -177,9 +184,10 @@ export default function ProjectCreate() {
                             <Card.Text>
                                 <Form.Control as="textarea" rows={4} placeholder="Put project description here..."
                                               value={projectBodyData.description} onChange={e =>{
-                                    setErrors('');
+                                    setErrorMessage('');
                                     setProjectBodyData({title: projectBodyData.title, description: e.target.value})}}/>
-                                {errors.description && (<Alert variant="danger">{errors.description}</Alert>)}
+                                <div>{errorMessage.descriptionMin && (<Alert
+                                    variant="danger">{errorMessage.descriptionMin}</Alert>)}</div>
                             </Card.Text>
                         </Card.Body>
                     </Card>
@@ -233,13 +241,7 @@ function getAllProjectRoleNames(setRolesData) {
     }, [])
 }
 
-function createProject(newProject, setErrors, setShowSuccessModal) {
-    const errorList = validate(newProject);
-    if(Object.keys(errorList).length>0){
-        setErrors(errorList);
-        return null;
-    }
-
+function createProject(newProject, setErrorMessage, setShowSuccessModal) {
     ProjectService.createProject(newProject).then(
         response => {
             if(response.data !==null){
@@ -249,7 +251,8 @@ function createProject(newProject, setErrors, setShowSuccessModal) {
     )
         .catch((error) => {
                 if (error.response) {
-                    console.log(error.response.data);
+                    const errorList =  validate(error.response);
+                    setErrorMessage(errorList);
                 } else if (error.request) {
                     console.log(error.request);
                 } else {
