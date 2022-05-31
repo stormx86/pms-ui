@@ -13,22 +13,26 @@ import ProjectService from "../services/project-service";
 import Alert from "react-bootstrap/Alert";
 import validate from "../validators/project-details-validator";
 import Modal from "react-bootstrap/Modal";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faTrash} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import getAllUsers from '../common/get-all-users'
 
 
 export default function ProjectCreate() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [currentUser, setCurrentUser] = useState(undefined);
     const [rolesData, setRolesData] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
     const [newRolesList, setNewRolesList] = useState([]);
     const [projectManagerName, setProjectManagerName] = useState('');
     const [projectBodyData, setProjectBodyData] = useState({title: '', description: ''});
     const [errorMessage, setErrorMessage] = useState({
         projectManagerConstraint: '',
-        descriptionMin:'',
-        titleMin:'',
-        roleErrors:[]
+        descriptionMin: '',
+        titleMin: '',
+        roleErrors: []
     });
     const roleUserInputValidationErrors = errorMessage.roleErrors;
 
@@ -56,7 +60,7 @@ export default function ProjectCreate() {
 
     const updateUsernamesForRoles = index => e => {
         let newArr = [...newRolesList];
-        newArr[index].userName = e.target.value;
+        newArr[index].userName = e.currentTarget.textContent;
         setNewRolesList(newArr);
         setErrorMessage('');
     };
@@ -71,6 +75,7 @@ export default function ProjectCreate() {
 
     getCurrentUser(setCurrentUser);
     getAllProjectRoleNames(setRolesData);
+    getAllUsers(setAllUsers);
 
     return (
         <Container fluid="true">
@@ -102,10 +107,21 @@ export default function ProjectCreate() {
                                         Project Manager:
                                     </Col>
                                     <Col xs={6}>
-                                        <Form.Control type="text" value={projectManagerName}
-                                                      onChange={e =>{
-                                                          setErrorMessage('');
-                                                          setProjectManagerName(e.target.value)}}/>
+                                        <Autocomplete
+                                            onChange={(e) => {
+                                                setErrorMessage('');
+                                                setProjectManagerName(e.currentTarget.textContent)
+                                            }}
+                                            freeSolo
+                                            options={allUsers.map((option) => option.username)}
+                                            renderInput={(params) => <TextField {...params} label="username"
+                                                                                size="small"
+                                                                                value={projectManagerName}
+                                                                                onChange={e => {
+                                                                                    setErrorMessage('');
+                                                                                    setProjectManagerName(e.target.value)
+                                                                                }}/>}
+                                        />
                                         <div>{errorMessage.projectManagerConstraint && (<Alert
                                             variant="danger">{errorMessage.projectManagerConstraint}</Alert>)}</div>
                                     </Col>
@@ -133,8 +149,17 @@ export default function ProjectCreate() {
                                                 </Form.Select>
                                             </Col>
                                             <Col xs={6}>
-                                                    <Form.Control type="text" value={roles.userName} onChange={updateUsernamesForRoles(index)}/>{' '}
-                                                    {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (<Alert variant="danger">User not found</Alert>)}
+                                                <Autocomplete
+                                                    onChange={updateUsernamesForRoles(index)}
+                                                    freeSolo
+                                                    options={allUsers.map((option) => option.username)}
+                                                    renderInput={(params) => <TextField {...params} label="username"
+                                                                                        size="small"
+                                                                                        value={roles.userName}
+                                                                                        onChange={updateUsernamesForRoles(index)}/>}
+                                                />{' '}
+                                                {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (
+                                                    <Alert variant="danger">User not found</Alert>)}
                                             </Col>
                                             <Col xs={1}>
                                                 <FontAwesomeIcon style={{cursor: 'pointer', fontSize: '18px'}}
@@ -150,7 +175,9 @@ export default function ProjectCreate() {
                         </ListGroup>
                     </Card>
                     <br/>
-                    <Button variant="success" onClick={() => {createProject(newProject, setErrorMessage, setShowSuccessModal)}}>Create</Button>{' '}
+                    <Button variant="success" onClick={() => {
+                        createProject(newProject, setErrorMessage, setShowSuccessModal)
+                    }}>Create</Button>{' '}
                 </Col>
                 <Col xs={5}>
                     <Card border="secondary" style={{width: '53rem'}}>
@@ -162,12 +189,13 @@ export default function ProjectCreate() {
                         <Card.Body>
                             <Card.Text>
                                 <Form.Control size="lg" type="text" placeholder="Put project title here..."
-                                              value={projectBodyData.title} onChange={e =>{
+                                              value={projectBodyData.title} onChange={e => {
                                     setErrorMessage('');
                                     setProjectBodyData({
                                         title: e.target.value,
                                         description: projectBodyData.description
-                                    })}}/>
+                                    })
+                                }}/>
                                 <div>{errorMessage.titleMin && (<Alert
                                     variant="danger">{errorMessage.titleMin}</Alert>)}</div>
                             </Card.Text>
@@ -183,9 +211,10 @@ export default function ProjectCreate() {
                         <Card.Body>
                             <Card.Text>
                                 <Form.Control as="textarea" rows={4} placeholder="Put project description here..."
-                                              value={projectBodyData.description} onChange={e =>{
+                                              value={projectBodyData.description} onChange={e => {
                                     setErrorMessage('');
-                                    setProjectBodyData({title: projectBodyData.title, description: e.target.value})}}/>
+                                    setProjectBodyData({title: projectBodyData.title, description: e.target.value})
+                                }}/>
                                 <div>{errorMessage.descriptionMin && (<Alert
                                     variant="danger">{errorMessage.descriptionMin}</Alert>)}</div>
                             </Card.Text>
@@ -244,14 +273,14 @@ function getAllProjectRoleNames(setRolesData) {
 function createProject(newProject, setErrorMessage, setShowSuccessModal) {
     ProjectService.createProject(newProject).then(
         response => {
-            if(response.data !==null){
+            if (response.data !== null) {
                 setShowSuccessModal(true);
             }
         }
     )
         .catch((error) => {
                 if (error.response) {
-                    const errorList =  validate(error.response);
+                    const errorList = validate(error.response);
                     setErrorMessage(errorList);
                 } else if (error.request) {
                     console.log(error.request);

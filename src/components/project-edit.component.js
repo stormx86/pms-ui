@@ -14,6 +14,9 @@ import validate from "../validators/project-details-validator";
 import Modal from "react-bootstrap/Modal";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTrash} from '@fortawesome/free-solid-svg-icons'
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import getAllUsers from '../common/get-all-users'
 
 export default function ProjectEdit() {
     const [searchParams] = useSearchParams();
@@ -27,6 +30,7 @@ export default function ProjectEdit() {
     const [projectDescription, setProjectDescription] = useState('');
     const [projectStatus, setProjectStatus] = useState('');
     const [newRolesList, setNewRolesList] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
 
     const [errorMessage, setErrorMessage] = useState({
         projectManagerConstraint: '',
@@ -62,7 +66,7 @@ export default function ProjectEdit() {
 
     const updateUsernamesForRoles = index => e => {
         let newArr = [...newRolesList];
-        newArr[index].userName = e.target.value;
+        newArr[index].userName = e.currentTarget.textContent;
         setNewRolesList(newArr);
         setErrorMessage('');
     };
@@ -87,7 +91,7 @@ export default function ProjectEdit() {
         projectId);
 
     getAllProjectRoleNames(setRolesData);
-
+    getAllUsers(setAllUsers);
 
     return (
         <Container fluid="true">
@@ -119,10 +123,21 @@ export default function ProjectEdit() {
                                         Project Manager:
                                     </Col>
                                     <Col xs={6}>
-                                        <Form.Control type="text" value={projectManager}
-                                                      onChange={e =>{
-                                                          setErrorMessage('');
-                                                          setProjectManager(e.target.value)}}/>
+                                        <Autocomplete
+                                            onChange={(e) => {
+                                                setErrorMessage('');
+                                                setProjectManager(e.currentTarget.textContent)
+                                            }}
+                                            freeSolo
+                                            options={allUsers.map((option) => option.username)}
+                                            renderInput={(params) => <TextField {...params} label="username"
+                                                                                size="small"
+                                                                                value={projectManager}
+                                                                                onChange={e => {
+                                                                                    setErrorMessage('');
+                                                                                    setProjectManager(e.target.value)
+                                                                                }}/>}
+                                        />
                                         <div>{errorMessage.projectManagerConstraint && (<Alert
                                             variant="danger">{errorMessage.projectManagerConstraint}</Alert>)}</div>
                                     </Col>
@@ -150,7 +165,15 @@ export default function ProjectEdit() {
                                                 </Form.Select>
                                             </Col>
                                             <Col xs={6}>
-                                                    <Form.Control type="text" value={roles.userName} onChange={updateUsernamesForRoles(index)}/>
+                                                <Autocomplete
+                                                    onChange={updateUsernamesForRoles(index)}
+                                                    freeSolo
+                                                    options={allUsers.map((option) => option.username)}
+                                                    renderInput={(params) => <TextField {...params} label="username"
+                                                                                        size="small"
+                                                                                        value={roles.userName}
+                                                                                        onChange={updateUsernamesForRoles(index)}/>}
+                                                />
                                                 {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (<Alert variant="danger">User not found</Alert>)}
                                             </Col>
                                             <Col xs={1}>
