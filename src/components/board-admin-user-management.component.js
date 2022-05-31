@@ -14,6 +14,7 @@ import FormControl from "react-bootstrap/FormControl";
 import InputGroup from "react-bootstrap/InputGroup";
 import Card from "react-bootstrap/Card";
 import Alert from "react-bootstrap/Alert";
+import getAllUsers from '../common/get-all-users'
 
 export default function BoardAdminUserManagement() {
 
@@ -27,7 +28,7 @@ export default function BoardAdminUserManagement() {
     const [newUserAdminRoleChecked, setNewUserAdminRoleChecked] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    getData(setData);
+    getAllUsers(setData);
 
     const handleClose = () => {
         setUserRoleChecked(false);
@@ -440,26 +441,6 @@ function addNewUser(newUser, setData, setErrorMessage) {
                 console.log(error.config);
             }
         );
-}
-
-function getData(setUsersData) {
-    useEffect(() => {
-        AdminService.getAllUsers().then(
-            response => {
-                setUsersData(response.data);
-            })
-            .catch((error) => {
-                    if (error.response) {
-                        console.log(error.response.data);
-                    } else if (error.request) {
-                        console.log(error.request);
-                    } else {
-                        console.log('Error', error.message);
-                    }
-                    console.log(error.config);
-                }
-            );
-    }, [])
 }
 
 function updateUserRoles(updatedUser, setData) {
