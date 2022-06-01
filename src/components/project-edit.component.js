@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
-import EventBus from "../common/event-bus";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -17,6 +16,7 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons'
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import getAllUsers from '../common/get-all-users'
+import getAllProjectRoleNames from '../common/get-all-project-role-names'
 
 export default function ProjectEdit() {
     const [searchParams] = useSearchParams();
@@ -34,9 +34,9 @@ export default function ProjectEdit() {
 
     const [errorMessage, setErrorMessage] = useState({
         projectManagerConstraint: '',
-        descriptionMin:'',
-        titleMin:'',
-        roleErrors:[]
+        descriptionMin: '',
+        titleMin: '',
+        roleErrors: []
     });
     const roleUserInputValidationErrors = errorMessage.roleErrors;
 
@@ -44,7 +44,7 @@ export default function ProjectEdit() {
 
     const handleClose = () => {
         setShowSuccessModal(false);
-        window.location.href = '/projects/project?projectId='+projectId
+        window.location.href = '/projects/project?projectId=' + projectId
     };
 
     const handleAddRole = () => {
@@ -130,13 +130,9 @@ export default function ProjectEdit() {
                                             }}
                                             freeSolo
                                             options={allUsers.map((option) => option.username)}
+                                            value={projectManager}
                                             renderInput={(params) => <TextField {...params} label="username"
-                                                                                size="small"
-                                                                                value={projectManager}
-                                                                                onChange={e => {
-                                                                                    setErrorMessage('');
-                                                                                    setProjectManager(e.target.value)
-                                                                                }}/>}
+                                                                                size="small"/>}
                                         />
                                         <div>{errorMessage.projectManagerConstraint && (<Alert
                                             variant="danger">{errorMessage.projectManagerConstraint}</Alert>)}</div>
@@ -149,7 +145,6 @@ export default function ProjectEdit() {
                             {newRolesList &&
                             newRolesList.map((roles, index) => {
                                 return (
-
                                     <ListGroup.Item key={index}>
                                         <Row style={{alignItems: 'center'}}>
                                             <Col xs={5}>
@@ -169,12 +164,12 @@ export default function ProjectEdit() {
                                                     onChange={updateUsernamesForRoles(index)}
                                                     freeSolo
                                                     options={allUsers.map((option) => option.username)}
+                                                    defaultValue={roles.userName}
                                                     renderInput={(params) => <TextField {...params} label="username"
-                                                                                        size="small"
-                                                                                        value={roles.userName}
-                                                                                        onChange={updateUsernamesForRoles(index)}/>}
+                                                                                        size="small"/>}
                                                 />
-                                                {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (<Alert variant="danger">User not found</Alert>)}
+                                                {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (
+                                                    <Alert variant="danger">User not found</Alert>)}
                                             </Col>
                                             <Col xs={1}>
                                                 <FontAwesomeIcon style={{cursor: 'pointer', fontSize: '18px'}}
@@ -190,7 +185,9 @@ export default function ProjectEdit() {
                         </ListGroup>
                     </Card>
                     <br/>
-                    <Button variant="success" onClick={() => {updateProject(projectId, updatedProject, setErrorMessage, setShowSuccessModal)}}>Update</Button>{' '}
+                    <Button variant="success" onClick={() => {
+                        updateProject(projectId, updatedProject, setErrorMessage, setShowSuccessModal)
+                    }}>Update</Button>{' '}
                 </Col>
                 <Col xs={5}>
                     <Card border="secondary" style={{width: '53rem'}}>
@@ -202,9 +199,10 @@ export default function ProjectEdit() {
                         <Card.Body>
                             <Card.Text>
                                 <Form.Control size="lg" type="text" placeholder="Put project title here..."
-                                              value={projectTitle} onChange={e =>{
+                                              value={projectTitle} onChange={e => {
                                     setErrorMessage('');
-                                    setProjectTitle(e.target.value)}}/>
+                                    setProjectTitle(e.target.value)
+                                }}/>
                                 <div>{errorMessage.titleMin && (<Alert
                                     variant="danger">{errorMessage.titleMin}</Alert>)}</div>
                             </Card.Text>
@@ -220,9 +218,10 @@ export default function ProjectEdit() {
                         <Card.Body>
                             <Card.Text>
                                 <Form.Control as="textarea" rows={4} placeholder="Put project description here..."
-                                              value={projectDescription} onChange={e =>{
+                                              value={projectDescription} onChange={e => {
                                     setErrorMessage('');
-                                    setProjectDescription(e.target.value)}}/>
+                                    setProjectDescription(e.target.value)
+                                }}/>
                                 <div>{errorMessage.descriptionMin && (<Alert
                                     variant="danger">{errorMessage.descriptionMin}</Alert>)}</div>
                             </Card.Text>
@@ -245,29 +244,6 @@ export default function ProjectEdit() {
     );
 }
 
-function getAllProjectRoleNames(setRolesData) {
-    useEffect(() => {
-        ProjectService.getAllProjectRoleNames().then(
-            response => {
-                setRolesData(response.data);
-            },
-            error => {
-                setRolesData(
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString()
-                );
-
-                if (error.response && error.response.status === 401) {
-                    EventBus.dispatch("logout");
-                }
-            }
-        );
-    }, [])
-}
-
 function getProjectData(setProjectCreator,
                         setProjectManager,
                         setProjectTitle,
@@ -286,31 +262,31 @@ function getProjectData(setProjectCreator,
                 setNewRolesList(response.data.userProjectRoleDto);
             })
             .catch((error) => {
-                if (error.response) {
-                    console.log(error.response.data);
-                } else if (error.request) {
-                    console.log(error.request);
-                } else {
-                    console.log('Error', error.message);
+                    if (error.response) {
+                        console.log(error.response.data);
+                    } else if (error.request) {
+                        console.log(error.request);
+                    } else {
+                        console.log('Error', error.message);
+                    }
+                    console.log(error.config);
                 }
-                console.log(error.config);
-            }
-        );
+            );
     }, [])
 }
 
 function updateProject(projectId, updatedProject, setErrorMessage, setShowSuccessModal) {
     ProjectService.updateProject(projectId, updatedProject).then(
         response => {
-            if(response.data !==null){
+            if (response.data !== null) {
                 setShowSuccessModal(true);
             }
         }
     )
         .catch((error) => {
-            if (error.response) {
-                const errorList =  validate(error.response);
-                setErrorMessage(errorList);
+                if (error.response) {
+                    const errorList = validate(error.response);
+                    setErrorMessage(errorList);
                 } else if (error.request) {
                     console.log(error.request);
                 } else {

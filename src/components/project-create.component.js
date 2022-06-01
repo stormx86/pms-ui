@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from "react";
-
-import EventBus from "../common/event-bus";
 import AuthService from "../services/auth-service";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -18,6 +16,7 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import getAllUsers from '../common/get-all-users'
+import getAllProjectRoleNames from '../common/get-all-project-role-names'
 
 
 export default function ProjectCreate() {
@@ -115,12 +114,7 @@ export default function ProjectCreate() {
                                             freeSolo
                                             options={allUsers.map((option) => option.username)}
                                             renderInput={(params) => <TextField {...params} label="username"
-                                                                                size="small"
-                                                                                value={projectManagerName}
-                                                                                onChange={e => {
-                                                                                    setErrorMessage('');
-                                                                                    setProjectManagerName(e.target.value)
-                                                                                }}/>}
+                                                                                size="small"/>}
                                         />
                                         <div>{errorMessage.projectManagerConstraint && (<Alert
                                             variant="danger">{errorMessage.projectManagerConstraint}</Alert>)}</div>
@@ -133,7 +127,6 @@ export default function ProjectCreate() {
                             {newRolesList &&
                             newRolesList.map((roles, index) => {
                                 return (
-
                                     <ListGroup.Item key={index}>
                                         <Row style={{alignItems: 'center'}}>
                                             <Col xs={5}>
@@ -154,9 +147,7 @@ export default function ProjectCreate() {
                                                     freeSolo
                                                     options={allUsers.map((option) => option.username)}
                                                     renderInput={(params) => <TextField {...params} label="username"
-                                                                                        size="small"
-                                                                                        value={roles.userName}
-                                                                                        onChange={updateUsernamesForRoles(index)}/>}
+                                                                                        size="small"/>}
                                                 />{' '}
                                                 {roleUserInputValidationErrors && roleUserInputValidationErrors.includes(roles.userName) && (
                                                     <Alert variant="danger">User not found</Alert>)}
@@ -244,29 +235,6 @@ function getCurrentUser(setCurrentUser) {
         if (user) {
             setCurrentUser(user.username);
         }
-    }, [])
-}
-
-function getAllProjectRoleNames(setRolesData) {
-    useEffect(() => {
-        ProjectService.getAllProjectRoleNames().then(
-            response => {
-                setRolesData(response.data);
-            },
-            error => {
-                setRolesData(
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString()
-                );
-
-                if (error.response && error.response.status === 401) {
-                    EventBus.dispatch("logout");
-                }
-            }
-        );
     }, [])
 }
 
