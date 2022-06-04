@@ -1,7 +1,7 @@
 # Project Management System - UI (pms-ui)
-> This is UI part of the [Project Management System](#https://github.com/stormx86/pms-rest-services) application.
+> This is UI part of the [Project Management System](https://github.com/stormx86/pms-rest-services) application.
 > Application provides basic functionality for performing management actions on the projects(in a general understanding) via web interface.
-> Previously existed FE part has been removed from [pms-rest-services](#https://github.com/stormx86/pms-rest-services), and the 
+> Previously existed FE part has been removed from [pms-rest-services](https://github.com/stormx86/pms-rest-services), and the 
 > current UI module was implemented with React from scratch.
  
  ## Table of contents
@@ -16,7 +16,7 @@
 This is my firs full-functional application in React created from scratch.
 React is my secondary skill since at my current position I'm BE Java engineer and touching the FE part in a limited scope, 
 but I believe there is no limits for curiosity and self-improvement.
-This UI module consumes the API provided by [pms-rest-services](#https://github.com/stormx86/pms-rest-services)
+This UI module consumes the API provided by [pms-rest-services](https://github.com/stormx86/pms-rest-services)
  
  ## Screenshots
  ![Main screen](./img/1.png)
