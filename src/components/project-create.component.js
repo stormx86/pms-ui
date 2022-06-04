@@ -201,7 +201,7 @@ export default function ProjectCreate() {
                         </Card.Header>
                         <Card.Body>
                             <Card.Text>
-                                <Form.Control as="textarea" rows={4} placeholder="Put project description here..."
+                                <Form.Control as="textarea" rows={8} placeholder="Put project description here..."
                                               value={projectBodyData.description} onChange={e => {
                                     setErrorMessage('');
                                     setProjectBodyData({title: projectBodyData.title, description: e.target.value})
