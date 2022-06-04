@@ -124,7 +124,7 @@ export default function ProjectDetails() {
                             </Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <Card.Text>
+                            <Card.Text style={{whiteSpace: 'pre-wrap'}}>
                                 {projectData.description}
                             </Card.Text>
                         </Card.Body>
@@ -174,7 +174,7 @@ export default function ProjectDetails() {
                                             </Row>
                                             <Row>
                                                 <Col xs={9}>
-                                                    <div>{comment.commentText}</div>
+                                                    <div style={{whiteSpace: 'pre-wrap'}}>{comment.commentText}</div>
                                                 </Col>
                                             </Row>
                                         </Container>

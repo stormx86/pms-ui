@@ -217,7 +217,7 @@ export default function ProjectEdit() {
                         </Card.Header>
                         <Card.Body>
                             <Card.Text>
-                                <Form.Control as="textarea" rows={4} placeholder="Put project description here..."
+                                <Form.Control as="textarea" rows={8} placeholder="Put project description here..."
                                               value={projectDescription} onChange={e => {
                                     setErrorMessage('');
                                     setProjectDescription(e.target.value)
